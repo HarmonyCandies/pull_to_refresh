@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "pull_to_refresh_notification",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}
