@@ -13,9 +13,6 @@ export struct PullToRefreshContainer {
   }) => any;
 
   build() {
-    Column() {
-      // Text('Contianer')
-      this.builder({state: this.viewModel.state, notificationDragOffset: this.viewModel.state })
-    }
+    this.builder({ state: this.viewModel.state, notificationDragOffset: this.viewModel.notificationDragOffset, })
   }
 }

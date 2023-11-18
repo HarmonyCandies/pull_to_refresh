@@ -2,7 +2,7 @@
   "name": "pull_to_refresh_notification",
   "version": "1.0.0",
   "description": "Please describe the basic information.",
-  "main": "PullToRefreshNotification.ets",
+  "main": "index.ets",
   "author": "zmtzawqlp@live.com",
   "license": "Apache-2.0",
   "dependencies": {}

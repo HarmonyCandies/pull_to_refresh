@@ -9,8 +9,8 @@ enum IndicatorStatus {
 }
 
 ///
-export class LoadingMoreBase<T> extends Array<T> implements IDataSource {
-  protected hasMore: boolean = true;
+export abstract class LoadingMoreBase<T> extends Array<T> implements IDataSource {
+  protected   abstract hasMore: boolean;
   private isLoading: boolean = false;
   private indicatorStatus: IndicatorStatus = IndicatorStatus.fullScreenBusying;
   // IDataSource start
@@ -69,9 +69,8 @@ export class LoadingMoreBase<T> extends Array<T> implements IDataSource {
     })
   }
 
-  protected async loadData(isLoadMoreAction: boolean = false): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
+  protected  abstract  loadData(isLoadMoreAction: boolean): Promise<boolean>;
+
 
   protected async loadMore(): Promise<boolean> {
     let preStatus = this.indicatorStatus;
