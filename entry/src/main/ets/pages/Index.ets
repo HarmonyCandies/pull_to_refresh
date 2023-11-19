@@ -1,6 +1,6 @@
 import {
   PullToRefreshNotification,
-  PullToRefreshContainer,
+  // PullToRefreshContainer,
   PullToRefreshIndicatorMode,
   PullToRefresh,
 } from '@ohos/pull_to_refresh_notification'
@@ -8,21 +8,36 @@ import { LoadingMoreBase } from '../viewmodel/LoadingMoreBase';
 import deviceInfo from '@ohos.deviceInfo'
 import display from '@ohos.display'
 import router from '@ohos.router'
-
+import common from '@ohos.app.ability.common';
+import window from '@ohos.window';
 @Entry
 @Component
 struct Index {
   title: string = 'pull_to_refresh_notification demo';
   pages: Array<PageInfo> = [
     {
-      description: 'Show how to use pull to refresh notification to build a pull refresh header',
-      route: 'pages/ListDemo',
+      description: 'Show how to use pull to refresh notification to build a pull refresh header,and hide it on refresh done',
+      route: 'pages/PullToRefreshHeader',
     },
 
   ]
 
-  aboutToAppear() {
+  // 获取UIAbility上下文
+  context: common.UIAbilityContext = getContext(this) as common.UIAbilityContext
+  async setSystemBar() {
+    // 获取当前应用窗口
+    let windowClass:window.Window = await window.getLastWindow(this.context)
+    // 将状态栏和导航栏的背景色设置为跟应用窗口相同的颜色
+    await windowClass.setWindowSystemBarProperties({
+      navigationBarColor: "#00FF00",
+      statusBarColor: "#00FF00",
+      navigationBarContentColor: "#00FF00",
+      statusBarContentColor: "#00FF00"
+    })
+  }
 
+  aboutToAppear() {
+    // this.setSystemBar()
   }
 
   build() {

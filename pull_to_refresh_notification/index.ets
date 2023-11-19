@@ -3,7 +3,7 @@
 
 export { PullToRefreshNotification } from './src/main/ets/components/PullToRefreshNotification'
 
-export { PullToRefreshContainer} from './src/main/ets/components/PullToRefreshContainer'
+// export { PullToRefreshContainer} from './src/main/ets/components/PullToRefreshContainer'
 
 export { PullToRefreshIndicatorMode } from './src/main/ets/common/RefreshConstants'
 
