@@ -100,7 +100,7 @@ export struct PullToRefreshNotification {
         let offsetY = this.dragOffset;
         let isReadyToRefresh = offsetY > this.reachToRefreshOffset;
         if (!isReadyToRefresh) {
-          this.pullBack(offsetY, 0, this.pullBackAnimatorOptions.duration * this.dragOffset / offsetY, PullToRefreshIndicatorMode.drag);
+          this.pullBack(offsetY, 0, this.pullBackAnimatorOptions.duration * this.dragOffset / offsetY, () => PullToRefreshIndicatorMode.drag);
           return;
         }
 
@@ -109,7 +109,7 @@ export struct PullToRefreshNotification {
 
           if (this.refreshOffset != undefined && isReadyToRefresh) {
             let refreshOffset = Math.min(this.refreshOffset, this.reachToRefreshOffset);
-            this.pullBack(offsetY, refreshOffset, this.pullBackAnimatorOptions.duration * (offsetY - refreshOffset) / offsetY, PullToRefreshIndicatorMode.snap)
+            this.pullBack(offsetY, refreshOffset, this.pullBackAnimatorOptions.duration * (offsetY - refreshOffset) / offsetY, () => PullToRefreshIndicatorMode.snap)
               .then(() => {
                 resolve();
               });
@@ -122,11 +122,29 @@ export struct PullToRefreshNotification {
         // onRefresh
         completer.then(() => {
           this.onInnerNoticed(PullToRefreshIndicatorMode.refresh, this.dragOffset, HitTestMode.None);
-          this.onRefresh().then((value) => {
-            if (value) {
-              this.pullBack(this.dragOffset, 0, this.pullBackAnimatorOptions.duration * this.dragOffset / offsetY, PullToRefreshIndicatorMode.done);
-            }
-          });
+          if (this.pullBackOnRefresh) {
+            let mode = PullToRefreshIndicatorMode.refresh;
+            this.pullBack(this.dragOffset, 0, this.pullBackAnimatorOptions.duration, () => mode);
+            this.onRefresh().then((value) => {
+              if (value) {
+                mode = PullToRefreshIndicatorMode.done;
+              }
+              else {
+                mode = PullToRefreshIndicatorMode.error;
+              }
+              if (this.mode != mode) {
+                this.onInnerNoticed(mode, this.dragOffset, HitTestMode.Default);
+              }
+            });
+          }
+          else {
+            this.onRefresh().then((value) => {
+              if (value) {
+                this.pullBack(this.dragOffset, 0, this.pullBackAnimatorOptions.duration * this.dragOffset / offsetY, () => PullToRefreshIndicatorMode.done);
+              }
+            });
+          }
+
         });
 
       }).onActionCancel((event?: GestureEvent) => {
@@ -143,7 +161,7 @@ export struct PullToRefreshNotification {
       }))
   }
 
-  private pullBack(begin: number, end: number, duration: number, mode: PullToRefreshIndicatorMode): Promise<void> {
+  private pullBack(begin: number, end: number, duration: number, getCurrentMode: () => PullToRefreshIndicatorMode): Promise<void> {
     let animatorOptions: AnimatorOptions = {
       duration: duration,
       easing: this.pullBackAnimatorOptions.easing,
@@ -159,7 +177,7 @@ export struct PullToRefreshNotification {
     this.animatorResult.onframe = (progress
     ) => {
       let dragOffset = progress;
-      this.onInnerNoticed(mode, dragOffset);
+      this.onInnerNoticed(getCurrentMode(), dragOffset);
     }
     this.animatorResult.play();
 

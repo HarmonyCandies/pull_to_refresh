@@ -4,6 +4,7 @@ import {
   PullToRefreshIndicatorMode,
   PullToRefresh,
 } from '@ohos/pull_to_refresh_notification'
+import { ScreenUtils } from '../util/ScreenUtils';
 import { LoadingMoreBase } from '../viewmodel/LoadingMoreBase';
 
 @Entry
@@ -84,7 +85,7 @@ struct PullToRefreshHeader {
       }
     }
     .titleMode(NavigationTitleMode.Mini)
-    .title('List Demo')
+    .title('PullToRefreshHeader').margin({ top: ScreenUtils.getStatusBarHeight() })
 
   }
 }
@@ -126,7 +127,6 @@ struct PullToRefreshContainer {
     .justifyContent(FlexAlign.Center)
     .height(this.dragOffset)
     .width('100%')
-    .backgroundColor(Color.Red)
   }
 }
 
