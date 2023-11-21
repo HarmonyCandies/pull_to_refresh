@@ -1,11 +1,9 @@
 import {
   PullToRefreshNotification,
-// PullToRefreshContainer,
+  pull_to_refresh_notification,
   PullToRefreshIndicatorMode,
-  PullToRefresh,
 } from '@ohos/pull_to_refresh_notification'
 import { ScreenUtils } from '../util/ScreenUtils';
-import { LoadingMoreBase } from '../viewmodel/LoadingMoreBase';
 
 @Entry
 @Component
@@ -14,18 +12,22 @@ struct PullToRefreshHeader {
   scroller: Scroller = new Scroller();
   @State mode: PullToRefreshIndicatorMode = PullToRefreshIndicatorMode.initial;
   @State dragOffset: number = 0;
-  @State hitTestMode: HitTestMode = HitTestMode.Default;
   @State lastRefreshTime: number = Date.now();
+  @State viewModel: pull_to_refresh_notification.ViewModel = new pull_to_refresh_notification.ViewModel();
 
   aboutToAppear() {
-    this.listData = new ListData();
     for (let index = 20; index > 0; index--) {
       this.listData.push(index);
     }
+    this.viewModel.refreshOffset = 150;
+    this.viewModel.maxDragOffset = 300;
+    this.viewModel.reachToRefreshOffset = 200;
 
   }
 
-  onRefresh(): void {
+  async onRefresh(): Promise<boolean> {
+
+    return false;
     var length = this.listData.length;
     let list: Array<number> = [];
     for (let index = length; index < length + 20; index++) {
@@ -35,27 +37,21 @@ struct PullToRefreshHeader {
     this.lastRefreshTime = Date.now();
     // this.listData.splice(0,0,...list.reverse());
     //this.listData.unshift(...list.reverse());
+
+    return true;
   }
 
   build() {
     Navigation() {
       PullToRefreshNotification(
         {
+          viewModel: this.viewModel,
           onRefresh: async () => {
             return new Promise<boolean>((resolve) => {
               setTimeout(() => {
-                resolve(true);
-                this.onRefresh();
+                this.onRefresh().then((value) => resolve(value));
               }, 2000);
             });
-          },
-          refreshOffset: 150,
-          maxDragOffset: 300,
-          reachToRefreshOffset: 200,
-          onStateChanged: (mode: PullToRefreshIndicatorMode, dragOffset: number, hitTestMode: HitTestMode) => {
-            this.mode = mode;
-            this.dragOffset = dragOffset;
-            this.hitTestMode = hitTestMode;
           },
           onReachEdge: () => {
             let yOffset = this.scroller.currentOffset().yOffset;
@@ -67,6 +63,7 @@ struct PullToRefreshHeader {
             dragOffset: this.dragOffset,
             mode: this.mode,
             lastRefreshTime: this.lastRefreshTime,
+            viewModel: this.viewModel,
           })
           List({ scroller: this.scroller }) {
             ForEach(this.listData, (item, index) => {
@@ -95,20 +92,23 @@ struct PullToRefreshContainer {
   @Prop mode: PullToRefreshIndicatorMode = PullToRefreshIndicatorMode.initial;
   @Prop dragOffset: number = 0;
   @Prop lastRefreshTime: number = 0;
+  @Link viewModel: pull_to_refresh_notification.ViewModel;
 
   getShowText(): string {
     let text = '';
-    if (this.mode == PullToRefreshIndicatorMode.armed) {
+    if (this.viewModel.mode == PullToRefreshIndicatorMode.armed) {
       text = 'Release to refresh';
-    } else if (this.mode == PullToRefreshIndicatorMode.refresh ||
+    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.refresh ||
       this.mode == PullToRefreshIndicatorMode.snap) {
       text = 'Loading...';
-    } else if (this.mode == PullToRefreshIndicatorMode.done) {
+    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.done) {
       text = 'Refresh completed.';
-    } else if (this.mode == PullToRefreshIndicatorMode.drag) {
+    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.drag) {
       text = 'Pull to refresh';
-    } else if (this.mode == PullToRefreshIndicatorMode.canceled) {
+    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.canceled) {
       text = 'Cancel refresh';
+    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.error) {
+      text = 'Refresh failed';
     }
     return text;
   }
@@ -119,24 +119,22 @@ struct PullToRefreshContainer {
 
   build() {
     Row() {
-      if (this.dragOffset != 0)
+      if (this.viewModel.dragOffset != 0)
         Text(`${this.getShowText()}---${this.getDate()}`)
-      if (this.dragOffset > 50)
+      if (this.viewModel.dragOffset > 50 && this.viewModel.mode == PullToRefreshIndicatorMode.refresh)
         LoadingProgress().width(50).height(50)
     }
     .justifyContent(FlexAlign.Center)
-    .height(this.dragOffset)
+    .height(this.viewModel.dragOffset)
     .width('100%')
+    .onClick(() => {
+      if (this.viewModel.mode == PullToRefreshIndicatorMode.error) {
+        this.viewModel.mode = PullToRefreshIndicatorMode.refresh;
+      }
+    })
+    .backgroundColor('#22808080')
   }
 }
 
-
-class ListData extends LoadingMoreBase<number> {
-  protected hasMore: boolean;
-
-  protected async loadData(isLoadMoreAction: boolean): Promise<boolean> {
-    return true;
-  }
-}
 
 

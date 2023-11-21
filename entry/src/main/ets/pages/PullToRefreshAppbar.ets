@@ -1,11 +1,9 @@
 import {
   PullToRefreshNotification,
-// PullToRefreshContainer,
+  pull_to_refresh_notification,
   PullToRefreshIndicatorMode,
-  PullToRefresh,
 } from '@ohos/pull_to_refresh_notification'
 import { ScreenUtils } from '../util/ScreenUtils';
-import { LoadingMoreBase } from '../viewmodel/LoadingMoreBase';
 import router from '@ohos.router';
 
 @Entry
@@ -13,15 +11,17 @@ import router from '@ohos.router';
 struct PullToRefreshAppbar {
   @State listData: Array<number> = [];
   scroller: Scroller = new Scroller();
-  @State mode: PullToRefreshIndicatorMode = PullToRefreshIndicatorMode.initial;
-  @State dragOffset: number = 0;
-  @State hitTestMode: HitTestMode = HitTestMode.Default;
   @State lastRefreshTime: number = Date.now();
+  @State viewModel: pull_to_refresh_notification.ViewModel = new pull_to_refresh_notification.ViewModel();
 
   aboutToAppear() {
     for (let index = 20; index > 0; index--) {
       this.listData.push(index);
     }
+    this.viewModel.pullBackOnRefresh = true;
+    this.viewModel.maxDragOffset = 120;
+    this.viewModel.reachToRefreshOffset = 80;
+    this.viewModel.pullBackAnimatorOptions.duration = 2000;
   }
 
   onRefresh(): void {
@@ -45,6 +45,7 @@ struct PullToRefreshAppbar {
     Column() {
       PullToRefreshNotification(
         {
+          viewModel: this.viewModel,
           onRefresh: async () => {
             return new Promise<boolean>((resolve) => {
               setTimeout(() => {
@@ -53,14 +54,6 @@ struct PullToRefreshAppbar {
               }, 2000);
             });
           },
-          pullBackOnRefresh: true,
-          maxDragOffset: 120,
-          reachToRefreshOffset: 80,
-          onStateChanged: (mode: PullToRefreshIndicatorMode, dragOffset: number, hitTestMode: HitTestMode) => {
-            this.mode = mode;
-            this.dragOffset = dragOffset;
-            this.hitTestMode = hitTestMode;
-          },
           onReachEdge: () => {
             let yOffset = this.scroller.currentOffset().yOffset;
             return Math.abs(yOffset) < 0.001;
@@ -68,7 +61,10 @@ struct PullToRefreshAppbar {
         }) {
         Stack({ alignContent: Alignment.Top }) {
           Column() {
-            Image($r('app.media.467141054')).width("100%").height(this.dragOffset + 200).objectFit(ImageFit.Cover)
+            Image($r('app.media.467141054'))
+              .width("100%")
+              .height(this.viewModel.dragOffset + 200)
+              .objectFit(ImageFit.Cover)
             List({ scroller: this.scroller }) {
               ForEach(this.listData, (item, index) => {
                 ListItem() {
@@ -79,11 +75,12 @@ struct PullToRefreshAppbar {
               })
             }.edgeEffect(EdgeEffect.None)
           }
+
           Row() {
             Text('back').onClick(() => {
               router.back();
             }).margin({ left: 15, top: 15 }).fontColor(Color.White)
-            if (this.mode == PullToRefreshIndicatorMode.refresh)
+            if (this.viewModel.mode == PullToRefreshIndicatorMode.refresh)
               LoadingProgress().width(24).height(24).margin({ right: 15 })
             else
               Text('...')
