@@ -81,7 +81,7 @@ struct PullToRefreshAppbar {
               router.back();
             }).margin({ left: 15, top: 15 }).fontColor(Color.White)
             if (this.viewModel.mode == PullToRefreshIndicatorMode.refresh)
-              LoadingProgress().width(24).height(24).margin({ right: 15 })
+              LoadingProgress().width(35).height(35).margin({ right: 15 }).color(Color.White)
             else
               Text('...')
                 .width(24)

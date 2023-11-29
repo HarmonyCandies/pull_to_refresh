@@ -1,7 +1,7 @@
 {
   "name": "pull_to_refresh_notification",
   "version": "1.0.0",
-  "description": "Harmony plugin for building pull to refresh effects with PullToRefreshNotification.",
+  "description": "Harmony plugin for building pull to refresh effects with PullToRefreshNotification quickly.",
   "main": "index.ets",
   "author": "zmtzawqlp@live.com",
   "license": "Apache-2.0",

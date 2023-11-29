@@ -1,6 +1,4 @@
 import router from '@ohos.router'
-import common from '@ohos.app.ability.common';
-import window from '@ohos.window';
 import { ScreenUtils } from '../util/ScreenUtils';
 
 @Entry

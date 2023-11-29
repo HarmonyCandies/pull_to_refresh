@@ -37,8 +37,10 @@ namespace pull_to_refresh_notification {
     animatorResult: AnimatorResult | null = null;
     /// The children should not join HitTest when start to pull to refresh
     hitTest: HitTestMode = HitTestMode.Default;
-    /// cache
-    private offsetY: number = 0;
+    /// A function that's called when the user has dragged the refresh indicator
+    /// far enough to demonstrate that they want the app to refresh. The returned
+    /// [Future] must complete when the refresh operation is finished.
+    onRefresh: RefreshCallback = async () => true;
 
     /// Set the default value of [maxDragOffset,reachToRefreshOffset]
     onAreaChange(oldValue: Area, newValue: Area) {
@@ -57,9 +59,7 @@ namespace pull_to_refresh_notification {
       if (this.mode == PullToRefreshIndicatorMode.initial) {
         this.onInnerNoticed(PullToRefreshIndicatorMode.drag, 0);
         this.hitTest = HitTestMode.None;
-        this.offsetY = 0;
       }
-
     }
 
     onActionUpdate(event: GestureEvent, onReachEdge: () => boolean) {
@@ -91,8 +91,8 @@ namespace pull_to_refresh_notification {
         let refreshOffset = Math.min(this.refreshOffset, this.reachToRefreshOffset);
         await this.pullBack(offsetY, refreshOffset, this.pullBackAnimatorOptions.duration * (offsetY - refreshOffset) / offsetY, () => PullToRefreshIndicatorMode.snap);
       }
-      this.onInnerNoticed(PullToRefreshIndicatorMode.refresh, this.dragOffset);
-      //this.refresh(offsetY, onRefresh);
+
+      this.refresh();
     }
 
     onActionCancel(event: GestureEvent) {
@@ -113,11 +113,12 @@ namespace pull_to_refresh_notification {
       this.dragOffset = dragOffset;
     }
 
-    refresh(onRefresh: RefreshCallback) {
+    refresh() {
+      this.onInnerNoticed(PullToRefreshIndicatorMode.refresh, this.dragOffset);
       if (this.pullBackOnRefresh) {
         let mode = PullToRefreshIndicatorMode.refresh;
         this.pullBack(this.dragOffset, 0, this.pullBackAnimatorOptions.duration, () => mode);
-        onRefresh().then((value) => {
+        this.onRefresh().then((value) => {
           if (value) {
             mode = PullToRefreshIndicatorMode.done;
           }
@@ -130,7 +131,7 @@ namespace pull_to_refresh_notification {
         });
       }
       else {
-        onRefresh().then((value) => {
+        this.onRefresh().then((value) => {
           if (value) {
             this.pullBack(this.dragOffset, 0, this.pullBackAnimatorOptions.duration, () => PullToRefreshIndicatorMode.done);
           }
@@ -173,7 +174,6 @@ namespace pull_to_refresh_notification {
           if (end == 0) {
             this.onInnerNoticed(PullToRefreshIndicatorMode.initial, 0);
             this.hitTest = HitTestMode.Default;
-            this.offsetY = 0;
           }
           this.animatorResult = null;
           resolve();

@@ -1,25 +1,22 @@
-import { PullToRefreshIndicatorMode, RefreshCallback } from '../common/RefreshConstants';
-import animator, { AnimatorOptions, AnimatorResult } from '@ohos.animator';
+import { RefreshCallback } from '../common/RefreshConstants';
 
 import pull_to_refresh_notification from '../common/ViewModel';
 
 @Component
 export struct PullToRefreshNotification {
-  /// The child or children
+  /// The children
   @BuilderParam
   private builder: () => void;
   /// A function that's called when the user has dragged the refresh indicator
   /// far enough to demonstrate that they want the app to refresh. The returned
   /// [Future] must complete when the refresh operation is finished.
-  onRefresh: RefreshCallback;
+  onRefresh: RefreshCallback = async () => true;
   /// Whether we reach the edge to pull refresh
-  onReachEdge: () => boolean;
-  @Link @Watch('onViewModelChanged') viewModel: pull_to_refresh_notification.ViewModel;
+  onReachEdge: () => boolean = () => true;
+  @Link viewModel: pull_to_refresh_notification.ViewModel;
 
-  onViewModelChanged() {
-    if (this.viewModel.mode == PullToRefreshIndicatorMode.refresh) {
-      this.viewModel.refresh(this.onRefresh);
-    }
+  aboutToAppear() {
+    this.viewModel.onRefresh = this.onRefresh;
   }
 
   aboutToDisappear() {

@@ -14,6 +14,7 @@ struct PullToRefreshHeader {
   @State dragOffset: number = 0;
   @State lastRefreshTime: number = Date.now();
   @State viewModel: pull_to_refresh_notification.ViewModel = new pull_to_refresh_notification.ViewModel();
+  firstTime: boolean = true;
 
   aboutToAppear() {
     for (let index = 20; index > 0; index--) {
@@ -27,13 +28,13 @@ struct PullToRefreshHeader {
 
   async onRefresh(): Promise<boolean> {
 
-    return false;
-    var length = this.listData.length;
-    let list: Array<number> = [];
-    for (let index = length; index < length + 20; index++) {
-      list.push(index);
+    if (this.firstTime) {
+      this.firstTime = false;
+      return false;
     }
-    this.listData = [length + 1, ...this.listData];
+    var length = this.listData.length;
+
+    this.listData = [length + 3, length + 2, length + 1, ...this.listData];
     this.lastRefreshTime = Date.now();
     // this.listData.splice(0,0,...list.reverse());
     //this.listData.unshift(...list.reverse());
@@ -129,7 +130,7 @@ struct PullToRefreshContainer {
     .width('100%')
     .onClick(() => {
       if (this.viewModel.mode == PullToRefreshIndicatorMode.error) {
-        this.viewModel.mode = PullToRefreshIndicatorMode.refresh;
+        this.viewModel.refresh();
       }
     })
     .backgroundColor('#22808080')
