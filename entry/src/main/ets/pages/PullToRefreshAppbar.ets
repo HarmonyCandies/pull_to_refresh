@@ -73,7 +73,16 @@ struct PullToRefreshAppbar {
               }, (item, index) => {
                 return `${item}`;
               })
-            }.edgeEffect(EdgeEffect.None)
+            }
+            // we must do this
+            .edgeEffect(EdgeEffect.None)
+            // if we are in pull to refresh gesture, the list should not be scroll
+            .onScrollFrameBegin((offset, state) => {
+              if (this.viewModel.dragOffset > 0) {
+                offset = 0;
+              }
+              return { offsetRemain: offset, };
+            },)
           }
 
           Row() {

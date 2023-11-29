@@ -35,8 +35,6 @@ namespace pull_to_refresh_notification {
     /// The animatorResult
     ///
     animatorResult: AnimatorResult | null = null;
-    /// The children should not join HitTest when start to pull to refresh
-    hitTest: HitTestMode = HitTestMode.Default;
     /// A function that's called when the user has dragged the refresh indicator
     /// far enough to demonstrate that they want the app to refresh. The returned
     /// [Future] must complete when the refresh operation is finished.
@@ -58,7 +56,6 @@ namespace pull_to_refresh_notification {
     onActionStart(event?: GestureEvent) {
       if (this.mode == PullToRefreshIndicatorMode.initial) {
         this.onInnerNoticed(PullToRefreshIndicatorMode.drag, 0);
-        this.hitTest = HitTestMode.None;
       }
     }
 
@@ -101,7 +98,6 @@ namespace pull_to_refresh_notification {
       }
 
       this.onInnerNoticed(PullToRefreshIndicatorMode.initial, 0);
-      this.hitTest = HitTestMode.Default;
       if (this.animatorResult != null) {
         this.animatorResult.finish();
         this.animatorResult = null;
@@ -173,7 +169,6 @@ namespace pull_to_refresh_notification {
         this.animatorResult.onfinish = () => {
           if (end == 0) {
             this.onInnerNoticed(PullToRefreshIndicatorMode.initial, 0);
-            this.hitTest = HitTestMode.Default;
           }
           this.animatorResult = null;
           resolve();

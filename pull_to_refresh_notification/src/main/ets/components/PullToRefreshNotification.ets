@@ -25,15 +25,10 @@ export struct PullToRefreshNotification {
 
   build() {
     Column() {
-      Column() {
-        this.builder()
-      }
-      // not work
-      .hitTestBehavior(this.viewModel.hitTest)
-      .onAreaChange((oldValue: Area, newValue: Area) => {
-        this.viewModel.onAreaChange(oldValue, newValue);
-      })
-    }
+      this.builder()
+    }.onAreaChange((oldValue: Area, newValue: Area) => {
+      this.viewModel.onAreaChange(oldValue, newValue);
+    })
     .parallelGesture(PanGesture({
       direction: PanDirection.Up | PanDirection.Down
     })

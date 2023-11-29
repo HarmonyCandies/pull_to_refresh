@@ -10,8 +10,6 @@ import { ScreenUtils } from '../util/ScreenUtils';
 struct PullToRefreshHeader {
   @State listData: Array<number> = [];
   scroller: Scroller = new Scroller();
-  @State mode: PullToRefreshIndicatorMode = PullToRefreshIndicatorMode.initial;
-  @State dragOffset: number = 0;
   @State lastRefreshTime: number = Date.now();
   @State viewModel: pull_to_refresh_notification.ViewModel = new pull_to_refresh_notification.ViewModel();
   firstTime: boolean = true;
@@ -23,11 +21,9 @@ struct PullToRefreshHeader {
     this.viewModel.refreshOffset = 150;
     this.viewModel.maxDragOffset = 300;
     this.viewModel.reachToRefreshOffset = 200;
-
   }
 
   async onRefresh(): Promise<boolean> {
-
     if (this.firstTime) {
       this.firstTime = false;
       return false;
@@ -59,27 +55,28 @@ struct PullToRefreshHeader {
             return Math.abs(yOffset) < 0.001;
           }
         }) {
-        Column() {
-          PullToRefreshContainer({
-            dragOffset: this.dragOffset,
-            mode: this.mode,
-            lastRefreshTime: this.lastRefreshTime,
-            viewModel: this.viewModel,
+        PullToRefreshContainer({
+          lastRefreshTime: this.lastRefreshTime,
+          viewModel: this.viewModel,
+        })
+        List({ scroller: this.scroller }) {
+          ForEach(this.listData, (item, index) => {
+            ListItem() {
+              Text(`${item}`,).align(Alignment.Center)
+            }.height(100).width('100%')
+          }, (item, index) => {
+            return `${item}`;
           })
-          List({ scroller: this.scroller }) {
-            ForEach(this.listData, (item, index) => {
-              ListItem() {
-                Text(`${item}`,).align(Alignment.Center)
-              }.height(100).width('100%')
-            }, (item, index) => {
-              return `${item}`;
-            })
-          }.edgeEffect(EdgeEffect.None)
-
-          // TODO
-          // .hitTestBehavior(this.hitTestMode)
         }
-
+        // we must do this
+        .edgeEffect(EdgeEffect.None)
+        // if we are in pull to refresh gesture, the list should not be scroll
+        .onScrollFrameBegin((offset, state) => {
+          if (this.viewModel.dragOffset > 0) {
+            offset = 0;
+          }
+          return { offsetRemain: offset, };
+        })
       }
     }
     .titleMode(NavigationTitleMode.Mini)
@@ -90,8 +87,6 @@ struct PullToRefreshHeader {
 
 @Component
 struct PullToRefreshContainer {
-  @Prop mode: PullToRefreshIndicatorMode = PullToRefreshIndicatorMode.initial;
-  @Prop dragOffset: number = 0;
   @Prop lastRefreshTime: number = 0;
   @Link viewModel: pull_to_refresh_notification.ViewModel;
 
@@ -100,7 +95,7 @@ struct PullToRefreshContainer {
     if (this.viewModel.mode == PullToRefreshIndicatorMode.armed) {
       text = 'Release to refresh';
     } else if (this.viewModel.mode == PullToRefreshIndicatorMode.refresh ||
-      this.mode == PullToRefreshIndicatorMode.snap) {
+      this.viewModel.mode == PullToRefreshIndicatorMode.snap) {
       text = 'Loading...';
     } else if (this.viewModel.mode == PullToRefreshIndicatorMode.done) {
       text = 'Refresh completed.';
