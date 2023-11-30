@@ -5,7 +5,7 @@
     "pull",
     "refresh"
   ],
-  "author": "zmtzawqlp@live.com",
+  "author": "zmtzawqlp",
   "name": "pull_to_refresh_notification",
   "description": "Harmony plugin for building pull to refresh effects with PullToRefreshNotification quickly.",
   "main": "index.ets",
