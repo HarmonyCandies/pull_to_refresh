@@ -1,13 +1,16 @@
 {
   "license": "MIT",
   "devDependencies": {},
+  "keywords": [
+    "pull",
+    "refresh"
+  ],
   "author": "zmtzawqlp@live.com",
   "name": "pull_to_refresh_notification",
   "description": "Harmony plugin for building pull to refresh effects with PullToRefreshNotification quickly.",
   "main": "index.ets",
+  "repository": "https://github.com/HarmonyCandies/pull_to_refresh_notification",
   "version": "1.0.0",
-  "keywords": ['pull','refresh'],
-  "homepage": 'https://github.com/HarmonyCandies/pull_to_refresh_notification',
-  "repository": 'https://github.com/HarmonyCandies/pull_to_refresh_notification',
+  "homepage": "https://github.com/HarmonyCandies/pull_to_refresh_notification",
   "dependencies": {}
 }

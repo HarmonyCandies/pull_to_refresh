@@ -1,7 +1,7 @@
 {
   "license": "",
   "devDependencies": {
-    "@ohos/hypium": "1.0.11",
+    "@ohos/hypium": "1.0.11"
   },
   "author": "",
   "name": "example",

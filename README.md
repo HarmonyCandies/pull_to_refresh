@@ -17,6 +17,9 @@
     - [使用 PullToRefreshNotification](#使用-pulltorefreshnotification)
     - [自定义下拉刷新效果](#自定义下拉刷新效果)
 
+| ![PullToRefreshHeader.gif](https://github.com/HarmonyCandies/HarmonyCandies/blob/main/gif/pull_to_refresh_notification/PullToRefreshHeader.gif)  |   ![PullToRefreshAppbar.gif](https://github.com/HarmonyCandies/HarmonyCandies/blob/main/gif/pull_to_refresh_notification/PullToRefreshAppbar.gif) |
+| --- | --- |
+
 
 ## 安装
 
@@ -188,7 +191,7 @@ aboutToAppear() {
 
 你可以通过对 `ViewModel` 中 `dragOffset` 和 `mode` 的状态，把创建属于自己的下拉刷新效果。如果下拉刷新失败了，你也可以通过调用 `ViewModel` 的 `refresh() `方法来重新执行刷新动画。
 
-```
+``` typescript
 /// The current drag offset
 dragOffset: number = 0;
 /// The current pull mode
@@ -197,7 +200,7 @@ mode: PullToRefreshIndicatorMode = PullToRefreshIndicatorMode.initial;
 
 下面是一个自定义下拉刷新头部的例子
 
-```
+``` typescript
 @Component
 struct PullToRefreshContainer {
   @Prop lastRefreshTime: number = 0;
