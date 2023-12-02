@@ -9,11 +9,17 @@ jobs:
   copy-on-changes:
     runs-on: ubuntu-latest
     env:
-      DOCS_FOLDER: 'pull_to_refresh_notification' # 定义文件夹路径
+      DOCS_FOLDER: 'pull_to_refresh_notification'
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+
+      - name: Get Last Commit Timestamp
+        id: last_commit_time
+        run: |
+          LAST_COMMIT_TS=$(git log -1 --format=%at)
+          echo "::set-output name=last_commit_ts::$LAST_COMMIT_TS"
 
       - name: Check for Changes
         id: check_changes
@@ -27,11 +33,20 @@ jobs:
           cp $DOCS_FOLDER/changelog.md .
           cp $DOCS_FOLDER/LICENSE .
 
+      - name: Calculate New Commit Time
+        if: steps.check_changes.outputs.stdout == 'Files have changed'
+        id: calculate_commit_time
+        run: |
+          LAST_COMMIT_TS=$(echo ${{ steps.last_commit_time.outputs.last_commit_ts }})
+          NEW_COMMIT_TS=$((LAST_COMMIT_TS + 60))
+          echo "::set-output name=new_commit_ts::$NEW_COMMIT_TS"
+
       - name: Commit and Push Changes
         if: steps.check_changes.outputs.stdout == 'Files have changed'
         run: |
+          NEW_COMMIT_TS=$(echo ${{ steps.calculate_commit_time.outputs.new_commit_ts }})
           git config --local user.email "zmtzawqlp@live.com"
           git config --local user.name "zmtzawqlp"
           git add README.md changelog.md LICENSE
-          git commit -m "Update README.md, changelog.md, and LICENSE in root directory"
+          git commit --date="$NEW_COMMIT_TS" -m "Update README.md, changelog.md, and LICENSE in root directory"
           git push
