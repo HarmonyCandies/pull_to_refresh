@@ -1,0 +1,37 @@
+name: Copy Files on Changes
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  copy-on-changes:
+    runs-on: ubuntu-latest
+    env:
+      DOCS_FOLDER: 'pull_to_refresh_notification' # 定义文件夹路径
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Check for Changes
+        id: check_changes
+        run: |
+          git diff --quiet HEAD^ $DOCS_FOLDER/README.md $DOCS_FOLDER/changelog.md $DOCS_FOLDER/LICENSE || echo "Files have changed"
+
+      - name: Copy Files to Root if Changed
+        if: steps.check_changes.outputs.stdout == 'Files have changed'
+        run: |
+          cp $DOCS_FOLDER/README.md .
+          cp $DOCS_FOLDER/changelog.md .
+          cp $DOCS_FOLDER/LICENSE .
+
+      - name: Commit and Push Changes
+        if: steps.check_changes.outputs.stdout == 'Files have changed'
+        run: |
+          git config --local user.email "zmtzawqlp@live.com"
+          git config --local user.name "zmtzawqlp"
+          git add README.md changelog.md LICENSE
+          git commit -m "Update README.md, changelog.md, and LICENSE in root directory"
+          git push
