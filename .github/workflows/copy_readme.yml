@@ -1,4 +1,4 @@
-name: Copy Files on Changes
+name: Copy and Commit on Changes
 
 on:
   push:
@@ -6,8 +6,9 @@ on:
       - main
 
 jobs:
-  copy-on-changes:
+  copy-and-commit:
     runs-on: ubuntu-latest
+
     env:
       DOCS_FOLDER: 'pull_to_refresh'
 
@@ -24,29 +25,27 @@ jobs:
       - name: Check for Changes
         id: check_changes
         run: |
-          git diff --quiet HEAD^ $DOCS_FOLDER/README.md $DOCS_FOLDER/CHANGELOG.md $DOCS_FOLDER/LICENSE || echo "Files have changed"
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD $DOCS_FOLDER/)
+          echo "::set-output name=changed_files::$CHANGED_FILES"
 
-      - name: Copy Files to Root if Changed
-        if: steps.check_changes.outputs.stdout == 'Files have changed'
+      - name: Copy Relevant Files to Root if Changed
+        if: steps.check_changes.outputs.changed_files != ''
         run: |
-          cp $DOCS_FOLDER/README.md .
-          cp $DOCS_FOLDER/CHANGELOG.md .
-          cp $DOCS_FOLDER/LICENSE .
+          CHANGED_FILES=$(echo ${{ steps.check_changes.outputs.changed_files }})
+          if echo "$CHANGED_FILES" | grep -qE "^($DOCS_FOLDER\/README\.md|$DOCS_FOLDER\/CHANGELOG\.md|$DOCS_FOLDER\/LICENSE)$"; then
+            cp $DOCS_FOLDER/README.md $DOCS_FOLDER/CHANGELOG.md $DOCS_FOLDER/LICENSE .
+            echo "Copied relevant files to root directory"
+          else
+            echo "No relevant files changed"
+          fi
 
-      - name: Calculate New Commit Time
-        if: steps.check_changes.outputs.stdout == 'Files have changed'
-        id: calculate_commit_time
+      - name: Commit Changes if Relevant Files Copied
+        if: steps.check_changes.outputs.changed_files != '' && steps.check_changes.outputs.changed_files != "$DOCS_FOLDER/README.md $DOCS_FOLDER/CHANGELOG.md $DOCS_FOLDER/LICENSE"
         run: |
           LAST_COMMIT_TS=$(echo ${{ steps.last_commit_time.outputs.last_commit_ts }})
           NEW_COMMIT_TS=$((LAST_COMMIT_TS + 60))
-          echo "::set-output name=new_commit_ts::$NEW_COMMIT_TS"
-
-      - name: Commit and Push Changes
-        if: steps.check_changes.outputs.stdout == 'Files have changed'
-        run: |
-          NEW_COMMIT_TS=$(echo ${{ steps.calculate_commit_time.outputs.new_commit_ts }})
           git config --local user.email "zmtzawqlp@live.com"
           git config --local user.name "zmtzawqlp"
-          git add README.md CHANGELOG.md LICENSE
+          git add .
           git commit --date="$NEW_COMMIT_TS" -m "Update README.md, CHANGELOG.md, and LICENSE in root directory"
           git push
