@@ -25,22 +25,22 @@ jobs:
       - name: Check for Changes
         id: check_changes
         run: |
-          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD $DOCS_FOLDER/)
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD "${DOCS_FOLDER}/")
           echo "::set-output name=changed_files::$CHANGED_FILES"
 
       - name: Copy Relevant Files to Root if Changed
         if: steps.check_changes.outputs.changed_files != ''
         run: |
           CHANGED_FILES=$(echo ${{ steps.check_changes.outputs.changed_files }})
-          if echo "$CHANGED_FILES" | grep -qE "^($DOCS_FOLDER\/README\.md|$DOCS_FOLDER\/CHANGELOG\.md|$DOCS_FOLDER\/LICENSE)$"; then
-            cp $DOCS_FOLDER/README.md $DOCS_FOLDER/CHANGELOG.md $DOCS_FOLDER/LICENSE .
+          if echo "$CHANGED_FILES" | grep -qE "^(${DOCS_FOLDER}/README\.md|${DOCS_FOLDER}/CHANGELOG\.md|${DOCS_FOLDER}/LICENSE)$"; then
+            cp "${DOCS_FOLDER}/README.md" "${DOCS_FOLDER}/CHANGELOG.md" "${DOCS_FOLDER}/LICENSE" .
             echo "Copied relevant files to root directory"
           else
             echo "No relevant files changed"
           fi
 
       - name: Commit Changes if Relevant Files Copied
-        if: steps.check_changes.outputs.changed_files != '' && steps.check_changes.outputs.changed_files != "$DOCS_FOLDER/README.md $DOCS_FOLDER/CHANGELOG.md $DOCS_FOLDER/LICENSE"
+        if: steps.check_changes.outputs.changed_files != '' && steps.check_changes.outputs.changed_files != "${DOCS_FOLDER}/README.md ${DOCS_FOLDER}/CHANGELOG.md ${DOCS_FOLDER}/LICENSE"
         run: |
           LAST_COMMIT_TS=$(echo ${{ steps.last_commit_time.outputs.last_commit_ts }})
           NEW_COMMIT_TS=$((LAST_COMMIT_TS + 60))
