@@ -1,6 +1,6 @@
 {
   "module": {
-    "name": "pull_to_refresh_notification",
+    "name": "pull_to_refresh",
     "type": "har",
     "deviceTypes": [
       "default",

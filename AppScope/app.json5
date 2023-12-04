@@ -1,6 +1,6 @@
 {
   "app": {
-    "bundleName": "com.example.pull_to_refresh_notification",
+    "bundleName": "com.example.pull_to_refresh",
     "vendor": "example",
     "versionCode": 1000000,
     "versionName": "1.0.0",

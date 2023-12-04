@@ -32,8 +32,8 @@
       ]
     },
     {
-      "name": "pull_to_refresh_notification",
-      "srcPath": "./pull_to_refresh_notification"
+      "name": "pull_to_refresh",
+      "srcPath": "./pull_to_refresh"
     }
   ]
 }

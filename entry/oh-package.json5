@@ -7,6 +7,6 @@
   "main": "",
   "version": "1.0.0",
   "dependencies": {
-    "@ohos/pull_to_refresh_notification": "file:../pull_to_refresh_notification"
+    "@ohos/pull_to_refresh": "file:../pull_to_refresh"
   }
 }

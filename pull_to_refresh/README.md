@@ -1,8 +1,8 @@
-# pull_to_refresh_notification
+# pull_to_refresh
 
 快速自定义下拉刷新动画的组件
 
-- [pull\_to\_refresh\_notification](#pull_to_refresh_notification)
+- [pull\_to\_refresh](#pull_to_refresh)
   - [安装](#安装)
   - [参数](#参数)
     - [PullToRefreshIndicatorMode](#pulltorefreshindicatormode)
@@ -14,16 +14,17 @@
     - [导入引用](#导入引用)
     - [定义配置](#定义配置)
     - [设置配置](#设置配置)
-    - [使用 PullToRefreshNotification](#使用-pulltorefreshnotification)
+    - [使用 PullToRefresh](#使用-pulltorefresh)
     - [自定义下拉刷新效果](#自定义下拉刷新效果)
 
-| ![PullToRefreshHeader.gif](https://github.com/HarmonyCandies/HarmonyCandies/blob/main/gif/pull_to_refresh_notification/PullToRefreshHeader.gif)  |   ![PullToRefreshAppbar.gif](https://github.com/HarmonyCandies/HarmonyCandies/blob/main/gif/pull_to_refresh_notification/PullToRefreshAppbar.gif) |
+| ![PullToRefreshHeader.gif](https://github.com/HarmonyCandies/HarmonyCandies/blob/main/gif/pull_to_refresh/PullToRefreshHeader.gif)  |   ![PullToRefreshAppbar.gif](https://github.com/HarmonyCandies/HarmonyCandies/blob/main/gif/pull_to_refresh/PullToRefreshAppbar.gif) |
 | --- | --- |
 
 
 ## 安装
 
-`ohpm install @ohos/pull_to_refresh_notification`
+`ohpm install @ohos/pull_to_refresh`
+
 
 ## 参数
 
@@ -114,16 +115,16 @@ onReachEdge: () => boolean = () => true;
 ### 导入引用
 ``` typescript
 import {
-  PullToRefreshNotification,
-  pull_to_refresh_notification,
+  PullToRefresh,
+  pull_to_refresh,
   PullToRefreshIndicatorMode,
-} from '@ohos/pull_to_refresh_notification'
+} from '@ohos/pull_to_refresh'
 ```
 
 ### 定义配置
 
 ``` typescript
-@State viewModel: pull_to_refresh_notification.ViewModel = new pull_to_refresh_notification.ViewModel();
+@State viewModel: pull_to_refresh.ViewModel = new pull_to_refresh.ViewModel();
 ```
 
 ### 设置配置
@@ -136,7 +137,7 @@ aboutToAppear() {
 }
 ```
 
-### 使用 PullToRefreshNotification
+### 使用 PullToRefresh
 
 将需要支持下拉刷新的部分，通过 `@BuilderParam` 修饰的 `builder` 回调传入，或者尾随闭包初始化组件。
 
@@ -144,7 +145,7 @@ aboutToAppear() {
 
 ``` typescript
 
-  PullToRefreshNotification(
+  PullToRefresh(
     {
       viewModel: this.viewModel,
       onRefresh: async () => {
@@ -204,7 +205,7 @@ mode: PullToRefreshIndicatorMode = PullToRefreshIndicatorMode.initial;
 @Component
 struct PullToRefreshContainer {
   @Prop lastRefreshTime: number = 0;
-  @Link viewModel: pull_to_refresh_notification.ViewModel;
+  @Link viewModel: pull_to_refresh.ViewModel;
 
   getShowText(): string {
     let text = '';

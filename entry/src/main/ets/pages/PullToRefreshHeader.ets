@@ -1,8 +1,8 @@
 import {
-  PullToRefreshNotification,
-  pull_to_refresh_notification,
+  PullToRefresh,
+  pull_to_refresh,
   PullToRefreshIndicatorMode,
-} from '@ohos/pull_to_refresh_notification'
+} from '@ohos/pull_to_refresh'
 import { ScreenUtils } from '../util/ScreenUtils';
 
 @Entry
@@ -11,7 +11,7 @@ struct PullToRefreshHeader {
   @State listData: Array<number> = [];
   scroller: Scroller = new Scroller();
   @State lastRefreshTime: number = Date.now();
-  @State viewModel: pull_to_refresh_notification.ViewModel = new pull_to_refresh_notification.ViewModel();
+  @State viewModel: pull_to_refresh.ViewModel = new pull_to_refresh.ViewModel();
   firstTime: boolean = true;
 
   aboutToAppear() {
@@ -40,7 +40,7 @@ struct PullToRefreshHeader {
 
   build() {
     Navigation() {
-      PullToRefreshNotification(
+      PullToRefresh(
         {
           viewModel: this.viewModel,
           onRefresh: async () => {
@@ -88,7 +88,7 @@ struct PullToRefreshHeader {
 @Component
 struct PullToRefreshContainer {
   @Prop lastRefreshTime: number = 0;
-  @Link viewModel: pull_to_refresh_notification.ViewModel;
+  @Link viewModel: pull_to_refresh.ViewModel;
 
   getShowText(): string {
     let text = '';

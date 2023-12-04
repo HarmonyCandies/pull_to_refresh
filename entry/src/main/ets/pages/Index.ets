@@ -4,7 +4,7 @@ import { ScreenUtils } from '../util/ScreenUtils';
 @Entry
 @Component
 struct Index {
-  title: string = 'pull_to_refresh_notification demo';
+  title: string = 'pull_to_refresh demo';
   pages: Array<PageInfo> = [
     {
       description: 'Show how to use pull to refresh notification to build a pull refresh header,and hide it on refresh done',

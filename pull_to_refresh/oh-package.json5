@@ -1,0 +1,17 @@
+{
+  "license": "Apache-2.0",
+  "devDependencies": {},
+  "keywords": [
+    "pull",
+    "refresh",
+    "pulltorefresh"
+  ],
+  "author": "zmtzawqlp",
+  "name": "pull_to_refresh",
+  "description": "Harmony plugin for building pull to refresh effects with PullToRefresh quickly.",
+  "main": "index.ets",
+  "repository": "https://github.com/HarmonyCandies/pull_to_refresh",
+  "version": "1.0.0",
+  "homepage": "https://github.com/HarmonyCandies/pull_to_refresh",
+  "dependencies": {}
+}

@@ -14,9 +14,9 @@ export enum PullToRefreshIndicatorMode {
 }
 
 /// The signature for a function that's called when the user has dragged a
-/// [PullToRefreshNotification] far enough to demonstrate that they want the app to
+/// [PullToRefresh] far enough to demonstrate that they want the app to
 /// refresh. The returned [Future] must complete when the refresh operation is
 /// finished.
 ///
-/// Used by [PullToRefreshNotification.onRefresh].
+/// Used by [PullToRefresh.onRefresh].
 export type RefreshCallback = ()=> Promise<boolean>;

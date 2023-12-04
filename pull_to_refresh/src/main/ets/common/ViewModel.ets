@@ -2,7 +2,7 @@ import { PullToRefreshIndicatorMode, RefreshCallback } from './RefreshConstants'
 import animator, { AnimatorOptions, AnimatorResult } from '@ohos.animator';
 
 
-namespace pull_to_refresh_notification {
+namespace pull_to_refresh {
   export class ViewModel {
     /// The current drag offset
     dragOffset: number = 0;
@@ -185,4 +185,4 @@ namespace pull_to_refresh_notification {
   }
 }
 
-export default pull_to_refresh_notification;
+export default pull_to_refresh;

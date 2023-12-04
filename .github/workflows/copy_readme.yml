@@ -9,7 +9,7 @@ jobs:
   copy-on-changes:
     runs-on: ubuntu-latest
     env:
-      DOCS_FOLDER: 'pull_to_refresh_notification'
+      DOCS_FOLDER: 'pull_to_refresh'
 
     steps:
       - name: Checkout Repository
@@ -24,13 +24,13 @@ jobs:
       - name: Check for Changes
         id: check_changes
         run: |
-          git diff --quiet HEAD^ $DOCS_FOLDER/README.md $DOCS_FOLDER/changelog.md $DOCS_FOLDER/LICENSE || echo "Files have changed"
+          git diff --quiet HEAD^ $DOCS_FOLDER/README.md $DOCS_FOLDER/CHANGELOG.md $DOCS_FOLDER/LICENSE || echo "Files have changed"
 
       - name: Copy Files to Root if Changed
         if: steps.check_changes.outputs.stdout == 'Files have changed'
         run: |
           cp $DOCS_FOLDER/README.md .
-          cp $DOCS_FOLDER/changelog.md .
+          cp $DOCS_FOLDER/CHANGELOG.md .
           cp $DOCS_FOLDER/LICENSE .
 
       - name: Calculate New Commit Time
@@ -47,6 +47,6 @@ jobs:
           NEW_COMMIT_TS=$(echo ${{ steps.calculate_commit_time.outputs.new_commit_ts }})
           git config --local user.email "zmtzawqlp@live.com"
           git config --local user.name "zmtzawqlp"
-          git add README.md changelog.md LICENSE
-          git commit --date="$NEW_COMMIT_TS" -m "Update README.md, changelog.md, and LICENSE in root directory"
+          git add README.md CHANGELOG.md LICENSE
+          git commit --date="$NEW_COMMIT_TS" -m "Update README.md, CHANGELOG.md, and LICENSE in root directory"
           git push

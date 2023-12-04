@@ -1,9 +1,9 @@
 import { RefreshCallback } from '../common/RefreshConstants';
 
-import pull_to_refresh_notification from '../common/ViewModel';
+import pull_to_refresh from '../common/ViewModel';
 
 @Component
-export struct PullToRefreshNotification {
+export struct PullToRefresh {
   /// The children
   @BuilderParam
   private builder: () => void;
@@ -13,7 +13,7 @@ export struct PullToRefreshNotification {
   onRefresh: RefreshCallback = async () => true;
   /// Whether we reach the edge to pull refresh
   onReachEdge: () => boolean = () => true;
-  @Link viewModel: pull_to_refresh_notification.ViewModel;
+  @Link viewModel: pull_to_refresh.ViewModel;
 
   aboutToAppear() {
     this.viewModel.onRefresh = this.onRefresh;
