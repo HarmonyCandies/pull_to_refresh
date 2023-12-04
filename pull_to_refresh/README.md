@@ -57,7 +57,9 @@ export enum PullToRefreshIndicatorMode {
 | pullBackAnimatorOptions | AnimatorOptions | 回退动画的一些配置(duration，easing，delay,fill) |
 | pullBackOnError | boolean | 刷新失败的时候，是否执行回退动画(默认 `false`) |
 
+
 * `maxDragOffset` 和 `reachToRefreshOffset` 如果不定义的话，会根据当前容器的高度设置默认值。
+
 
 ```
 /// Set the default value of [maxDragOffset,reachToRefreshOffset]
