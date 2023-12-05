@@ -7,7 +7,7 @@
     "pulltorefresh"
   ],
   "author": "zmtzawqlp",
-  "name": "@hmcd/pull_to_refresh",
+  "name": "@candies/pull_to_refresh",
   "description": "Harmony plugin for building pull to refresh effects with PullToRefresh quickly.",
   "main": "index.ets",
   "repository": "https://github.com/HarmonyCandies/pull_to_refresh",

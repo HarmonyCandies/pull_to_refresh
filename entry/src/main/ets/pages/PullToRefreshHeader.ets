@@ -2,7 +2,7 @@ import {
   PullToRefresh,
   pull_to_refresh,
   PullToRefreshIndicatorMode,
-} from '@hmcd/pull_to_refresh'
+} from '@candies/pull_to_refresh'
 import { ScreenUtils } from '../util/ScreenUtils';
 
 @Entry

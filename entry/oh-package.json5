@@ -7,6 +7,6 @@
   "main": "",
   "version": "1.0.0",
   "dependencies": {
-    "@hmcd/pull_to_refresh": "file:../pull_to_refresh"
+    "@candies/pull_to_refresh": "file:../pull_to_refresh"
   }
 }

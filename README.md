@@ -23,7 +23,7 @@
 
 ## 安装
 
-`ohpm install @hmcd/pull_to_refresh`
+`ohpm install @candies/pull_to_refresh`
 
 
 ## 参数
@@ -120,7 +120,7 @@ import {
   PullToRefresh,
   pull_to_refresh,
   PullToRefreshIndicatorMode,
-} from '@hmcd/pull_to_refresh'
+} from '@candies/pull_to_refresh'
 ```
 
 ### 定义配置
