@@ -23,7 +23,7 @@
 
 ## 安装
 
-`ohpm install @ohos/pull_to_refresh`
+`ohpm install @hmcd/pull_to_refresh`
 
 
 ## 参数
@@ -120,7 +120,7 @@ import {
   PullToRefresh,
   pull_to_refresh,
   PullToRefreshIndicatorMode,
-} from '@ohos/pull_to_refresh'
+} from '@hmcd/pull_to_refresh'
 ```
 
 ### 定义配置
