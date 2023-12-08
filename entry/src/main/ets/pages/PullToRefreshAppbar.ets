@@ -1,8 +1,4 @@
-import {
-  PullToRefresh,
-  pull_to_refresh,
-  PullToRefreshIndicatorMode,
-} from '@candies/pull_to_refresh'
+import { PullToRefresh, pull_to_refresh, PullToRefreshIndicatorMode, } from '@candies/pull_to_refresh'
 import { ScreenUtils } from '../util/ScreenUtils';
 import router from '@ohos.router';
 
@@ -12,16 +8,12 @@ struct PullToRefreshAppbar {
   @State listData: Array<number> = [];
   scroller: Scroller = new Scroller();
   @State lastRefreshTime: number = Date.now();
-  @State viewModel: pull_to_refresh.ViewModel = new pull_to_refresh.ViewModel();
+  @State controller: pull_to_refresh.Controller = new pull_to_refresh.Controller();
 
   aboutToAppear() {
     for (let index = 20; index > 0; index--) {
       this.listData.push(index);
     }
-    this.viewModel.pullBackOnRefresh = true;
-    this.viewModel.maxDragOffset = 120;
-    this.viewModel.reachToRefreshOffset = 80;
-    this.viewModel.pullBackAnimatorOptions.duration = 2000;
   }
 
   onRefresh(): void {
@@ -45,7 +37,20 @@ struct PullToRefreshAppbar {
     Column() {
       PullToRefresh(
         {
-          viewModel: this.viewModel,
+          pullBackOnRefresh: true,
+          maxDragOffset: 120,
+          reachToRefreshOffset: 80,
+          pullBackAnimatorOptions: {
+            duration: 2000,
+            easing: "friction",
+            delay: 0,
+            fill: "forwards",
+            direction: "normal",
+            iterations: 1,
+            begin: 1.0,
+            end: 0.0
+          },
+          controller: this.controller,
           onRefresh: async () => {
             return new Promise<boolean>((resolve) => {
               setTimeout(() => {
@@ -63,7 +68,7 @@ struct PullToRefreshAppbar {
           Column() {
             Image($r('app.media.467141054'))
               .width("100%")
-              .height(this.viewModel.dragOffset + 200)
+              .height(this.controller.dragOffset + 200)
               .objectFit(ImageFit.Cover)
             List({ scroller: this.scroller }) {
               ForEach(this.listData, (item, index) => {
@@ -78,7 +83,7 @@ struct PullToRefreshAppbar {
             .edgeEffect(EdgeEffect.None)
             // if we are in pull to refresh gesture, the list should not be scroll
             .onScrollFrameBegin((offset, state) => {
-              if (this.viewModel.dragOffset > 0) {
+              if (this.controller.dragOffset > 0) {
                 offset = 0;
               }
               return { offsetRemain: offset, };
@@ -89,7 +94,7 @@ struct PullToRefreshAppbar {
             Text('back').onClick(() => {
               router.back();
             }).margin({ left: 15, top: 15 }).fontColor(Color.White)
-            if (this.viewModel.mode == PullToRefreshIndicatorMode.refresh)
+            if (this.controller.mode == PullToRefreshIndicatorMode.refresh)
               LoadingProgress().width(35).height(35).margin({ right: 15 }).color(Color.White)
             else
               Text('...')

@@ -6,14 +6,13 @@
   - [安装](#安装)
   - [参数](#参数)
     - [PullToRefreshIndicatorMode](#pulltorefreshindicatormode)
-    - [ViewModel 配置参数](#viewmodel-配置参数)
+    - [配置参数](#配置参数)
     - [回调](#回调)
       - [onRefresh](#onrefresh)
       - [onReachEdge](#onreachedge)
   - [使用](#使用)
     - [导入引用](#导入引用)
     - [定义配置](#定义配置)
-    - [设置配置](#设置配置)
     - [使用 PullToRefresh](#使用-pulltorefresh)
     - [自定义下拉刷新效果](#自定义下拉刷新效果)
 
@@ -43,9 +42,7 @@ export enum PullToRefreshIndicatorMode {
 }
 ```
 
-### ViewModel 配置参数
-
-配置参数通过对象 `ViewModel` 进行设置。
+### 配置参数
 
 
 | 参数 | 类型 | 描述 |
@@ -126,17 +123,7 @@ import {
 ### 定义配置
 
 ``` typescript
-@State viewModel: pull_to_refresh.ViewModel = new pull_to_refresh.ViewModel();
-```
-
-### 设置配置
-
-``` typescript
-aboutToAppear() {
-  this.viewModel.refreshOffset = 150;
-  this.viewModel.maxDragOffset = 300;
-  this.viewModel.reachToRefreshOffset = 200;
-}
+@State controller: pull_to_refresh.Controller = new pull_to_refresh.Controller();
 ```
 
 ### 使用 PullToRefresh
@@ -149,7 +136,10 @@ aboutToAppear() {
 
   PullToRefresh(
     {
-      viewModel: this.viewModel,
+      refreshOffset: 150,
+      maxDragOffset: 300,
+      reachToRefreshOffset: 200,    
+      controller: this.controller,
       onRefresh: async () => {
         return new Promise<boolean>((resolve) => {
           setTimeout(() => {
@@ -166,7 +156,7 @@ aboutToAppear() {
     // 我们自定义的下拉刷新头部
     PullToRefreshContainer({
       lastRefreshTime: this.lastRefreshTime,
-      viewModel: this.viewModel,
+      controller: this.controller,
     })
     List({ scroller: this.scroller }) {
       ForEach(this.listData, (item, index) => {
@@ -181,7 +171,7 @@ aboutToAppear() {
     .edgeEffect(EdgeEffect.None)
     // 为了使下拉刷新的手势的过程中，不触发列表的滚动
     .onScrollFrameBegin((offset, state) => {
-      if (this.viewModel.dragOffset > 0) {
+      if (this.controller.dragOffset > 0) {
         offset = 0;
       }
       return { offsetRemain: offset, };
@@ -192,7 +182,7 @@ aboutToAppear() {
 
 ### 自定义下拉刷新效果 
 
-你可以通过对 `ViewModel` 中 `dragOffset` 和 `mode` 的状态，把创建属于自己的下拉刷新效果。如果下拉刷新失败了，你也可以通过调用 `ViewModel` 的 `refresh() `方法来重新执行刷新动画。
+你可以通过对 `Controller` 中 `dragOffset` 和 `mode` 的状态，把创建属于自己的下拉刷新效果。如果下拉刷新失败了，你可以通过调用 `Controller` 的 `refresh() `方法来重新执行刷新动画。
 
 ``` typescript
 /// The current drag offset
@@ -207,22 +197,22 @@ mode: PullToRefreshIndicatorMode = PullToRefreshIndicatorMode.initial;
 @Component
 struct PullToRefreshContainer {
   @Prop lastRefreshTime: number = 0;
-  @Link viewModel: pull_to_refresh.ViewModel;
+  @Link controller: pull_to_refresh.Controller;
 
   getShowText(): string {
     let text = '';
-    if (this.viewModel.mode == PullToRefreshIndicatorMode.armed) {
+    if (this.controller.mode == PullToRefreshIndicatorMode.armed) {
       text = 'Release to refresh';
-    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.refresh ||
-      this.viewModel.mode == PullToRefreshIndicatorMode.snap) {
+    } else if (this.controller.mode == PullToRefreshIndicatorMode.refresh ||
+      this.controller.mode == PullToRefreshIndicatorMode.snap) {
       text = 'Loading...';
-    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.done) {
+    } else if (this.controller.mode == PullToRefreshIndicatorMode.done) {
       text = 'Refresh completed.';
-    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.drag) {
+    } else if (this.controller.mode == PullToRefreshIndicatorMode.drag) {
       text = 'Pull to refresh';
-    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.canceled) {
+    } else if (this.controller.mode == PullToRefreshIndicatorMode.canceled) {
       text = 'Cancel refresh';
-    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.error) {
+    } else if (this.controller.mode == PullToRefreshIndicatorMode.error) {
       text = 'Refresh failed';
     }
     return text;
@@ -234,18 +224,17 @@ struct PullToRefreshContainer {
 
   build() {
     Row() {
-      if (this.viewModel.dragOffset != 0)
+      if (this.controller.dragOffset != 0)
         Text(`${this.getShowText()}---${this.getDate()}`)
-      if (this.viewModel.dragOffset > 50 && this.viewModel.mode == PullToRefreshIndicatorMode.refresh)
+      if (this.controller.dragOffset > 50 && this.controller.mode == PullToRefreshIndicatorMode.refresh)
         LoadingProgress().width(50).height(50)
     }
     .justifyContent(FlexAlign.Center)
-    .height(this.viewModel.dragOffset)
+    .height(this.controller.dragOffset)
     .width('100%')
     .onClick(() => {
-      if (this.viewModel.mode == PullToRefreshIndicatorMode.error) {
-        // 点击重新触发刷新动画
-        this.viewModel.refresh();
+      if (this.controller.mode == PullToRefreshIndicatorMode.error) {
+        this.controller.refresh();
       }
     })
     .backgroundColor('#22808080')

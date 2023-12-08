@@ -1,8 +1,4 @@
-import {
-  PullToRefresh,
-  pull_to_refresh,
-  PullToRefreshIndicatorMode,
-} from '@candies/pull_to_refresh'
+import { PullToRefresh, pull_to_refresh, PullToRefreshIndicatorMode, } from '@candies/pull_to_refresh'
 import { ScreenUtils } from '../util/ScreenUtils';
 
 @Entry
@@ -11,16 +7,13 @@ struct PullToRefreshHeader {
   @State listData: Array<number> = [];
   scroller: Scroller = new Scroller();
   @State lastRefreshTime: number = Date.now();
-  @State viewModel: pull_to_refresh.ViewModel = new pull_to_refresh.ViewModel();
+  @State controller: pull_to_refresh.Controller = new pull_to_refresh.Controller();
   firstTime: boolean = true;
 
   aboutToAppear() {
     for (let index = 20; index > 0; index--) {
       this.listData.push(index);
     }
-    this.viewModel.refreshOffset = 150;
-    this.viewModel.maxDragOffset = 300;
-    this.viewModel.reachToRefreshOffset = 200;
   }
 
   async onRefresh(): Promise<boolean> {
@@ -42,7 +35,10 @@ struct PullToRefreshHeader {
     Navigation() {
       PullToRefresh(
         {
-          viewModel: this.viewModel,
+          refreshOffset: 150,
+          maxDragOffset: 300,
+          reachToRefreshOffset: 200,
+          controller: this.controller,
           onRefresh: async () => {
             return new Promise<boolean>((resolve) => {
               setTimeout(() => {
@@ -57,7 +53,7 @@ struct PullToRefreshHeader {
         }) {
         PullToRefreshContainer({
           lastRefreshTime: this.lastRefreshTime,
-          viewModel: this.viewModel,
+          controller: this.controller,
         })
         List({ scroller: this.scroller }) {
           ForEach(this.listData, (item, index) => {
@@ -72,7 +68,7 @@ struct PullToRefreshHeader {
         .edgeEffect(EdgeEffect.None)
         // if we are in pull to refresh gesture, the list should not be scroll
         .onScrollFrameBegin((offset, state) => {
-          if (this.viewModel.dragOffset > 0) {
+          if (this.controller.dragOffset > 0) {
             offset = 0;
           }
           return { offsetRemain: offset, };
@@ -88,22 +84,22 @@ struct PullToRefreshHeader {
 @Component
 struct PullToRefreshContainer {
   @Prop lastRefreshTime: number = 0;
-  @Link viewModel: pull_to_refresh.ViewModel;
+  @Link controller: pull_to_refresh.Controller;
 
   getShowText(): string {
     let text = '';
-    if (this.viewModel.mode == PullToRefreshIndicatorMode.armed) {
+    if (this.controller.mode == PullToRefreshIndicatorMode.armed) {
       text = 'Release to refresh';
-    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.refresh ||
-      this.viewModel.mode == PullToRefreshIndicatorMode.snap) {
+    } else if (this.controller.mode == PullToRefreshIndicatorMode.refresh ||
+      this.controller.mode == PullToRefreshIndicatorMode.snap) {
       text = 'Loading...';
-    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.done) {
+    } else if (this.controller.mode == PullToRefreshIndicatorMode.done) {
       text = 'Refresh completed.';
-    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.drag) {
+    } else if (this.controller.mode == PullToRefreshIndicatorMode.drag) {
       text = 'Pull to refresh';
-    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.canceled) {
+    } else if (this.controller.mode == PullToRefreshIndicatorMode.canceled) {
       text = 'Cancel refresh';
-    } else if (this.viewModel.mode == PullToRefreshIndicatorMode.error) {
+    } else if (this.controller.mode == PullToRefreshIndicatorMode.error) {
       text = 'Refresh failed';
     }
     return text;
@@ -115,17 +111,17 @@ struct PullToRefreshContainer {
 
   build() {
     Row() {
-      if (this.viewModel.dragOffset != 0)
+      if (this.controller.dragOffset != 0)
         Text(`${this.getShowText()}---${this.getDate()}`)
-      if (this.viewModel.dragOffset > 50 && this.viewModel.mode == PullToRefreshIndicatorMode.refresh)
+      if (this.controller.dragOffset > 50 && this.controller.mode == PullToRefreshIndicatorMode.refresh)
         LoadingProgress().width(50).height(50)
     }
     .justifyContent(FlexAlign.Center)
-    .height(this.viewModel.dragOffset)
+    .height(this.controller.dragOffset)
     .width('100%')
     .onClick(() => {
-      if (this.viewModel.mode == PullToRefreshIndicatorMode.error) {
-        this.viewModel.refresh();
+      if (this.controller.mode == PullToRefreshIndicatorMode.error) {
+        this.controller.refresh();
       }
     })
     .backgroundColor('#22808080')
