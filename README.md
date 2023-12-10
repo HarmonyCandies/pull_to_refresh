@@ -182,7 +182,7 @@ import {
 
 ### 自定义下拉刷新效果 
 
-你可以通过对 `Controller` 中 `dragOffset` 和 `mode` 的状态，把创建属于自己的下拉刷新效果。如果下拉刷新失败了，你可以通过调用 `Controller` 的 `refresh() `方法来重新执行刷新动画。
+你可以通过对 `Controller` 中 `dragOffset` 和 `mode` 的判断，创建属于自己的下拉刷新效果。如果下拉刷新失败了，你可以通过调用 `Controller` 的 `refresh() `方法来重新执行刷新动画。
 
 ``` typescript
 /// The current drag offset
