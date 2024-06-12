@@ -11,7 +11,7 @@
   "description": "Harmony plugin for building pull to refresh effects with PullToRefresh quickly.",
   "main": "index.ets",
   "repository": "https://github.com/HarmonyCandies/pull_to_refresh",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/HarmonyCandies/pull_to_refresh",
   "dependencies": {}
 }

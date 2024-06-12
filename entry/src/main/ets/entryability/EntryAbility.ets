@@ -18,7 +18,7 @@ export default class EntryAbility extends UIAbility {
   async onWindowStageCreate(windowStage: window.WindowStage): Promise<void> {
     // Main window is created, set main page for this ability
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
-    AppStorage.SetOrCreate<number>("statusBarHeight", 36);
+    AppStorage.setOrCreate<number>("statusBarHeight", 36);
      ScreenUtils.enterImmersion(windowStage);
 
     windowStage.loadContent('pages/Index', (err, data) => {

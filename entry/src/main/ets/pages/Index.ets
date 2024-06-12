@@ -20,7 +20,7 @@ struct Index {
     Column() {
       Text(`${this.title}`)
       List() {
-        ForEach(this.pages, (item, index) => {
+        ForEach(this.pages, (item:PageInfo, index) => {
           ListItem() {
             Text(`${index + 1}. ${item.description}`).onClick((x) => {
               router.pushUrl({ url: item.route });
@@ -34,8 +34,8 @@ struct Index {
 }
 
 interface PageInfo {
-  description: String;
-  route: String;
+  description: string;
+  route: string;
 }
 
 

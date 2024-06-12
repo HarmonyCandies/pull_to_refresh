@@ -3,24 +3,25 @@ import display from '@ohos.display'
 
 export class ScreenUtils {
   static getStatusBarHeight() {
-    var statusBarHeight= AppStorage.Get<number>('statusBarHeight');
+    let statusBarHeight = AppStorage.get<number>('statusBarHeight');
     return statusBarHeight;
   }
 
   static getBottomHeight() {
-    return AppStorage.Get<number>('bottomHeight');
+    return AppStorage.get<number>('bottomHeight');
   }
 
   static async enterImmersion(windowStage: window.WindowStage): Promise<void> {
 
     let windowClass: window.Window = await windowStage.getMainWindow()
+
     // 获取状态栏和导航栏的高度
-    windowClass.on("avoidAreaChange", ({ type, area }) => {
-      if (type == window.AvoidAreaType.TYPE_SYSTEM) {
+    windowClass.on("avoidAreaChange", (options: window.AvoidAreaOptions) => {
+      if (options.type == window.AvoidAreaType.TYPE_SYSTEM) {
         // 将状态栏和导航栏的高度保存在AppStorage中
-        var defaultDisplay = display.getDefaultDisplaySync();
-        AppStorage.SetOrCreate<number>("statusBarHeight", area.topRect.height / defaultDisplay.densityPixels);
-        AppStorage.SetOrCreate<number>("bottomHeight", area.bottomRect.height / defaultDisplay.densityPixels);
+        let defaultDisplay = display.getDefaultDisplaySync();
+        AppStorage.setOrCreate<number>("statusBarHeight", options.area.topRect.height / defaultDisplay.densityPixels);
+        AppStorage.setOrCreate<number>("bottomHeight", options.area.bottomRect.height / defaultDisplay.densityPixels);
       }
     })
     // 设置窗口布局为沉浸式布局

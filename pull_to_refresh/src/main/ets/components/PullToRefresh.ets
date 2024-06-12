@@ -16,11 +16,11 @@ export struct PullToRefresh {
   onReachEdge: () => boolean = () => true;
   @Link controller: pull_to_refresh.Controller;
   /// The max drag offset
-  @Prop maxDragOffset: number = undefined;
+  @Prop maxDragOffset: number | undefined = undefined;
   /// The offset to be dragged far enough that an up event will run the onRefresh callback.
-  @Prop reachToRefreshOffset: number = undefined;
+  @Prop reachToRefreshOffset: number | undefined = undefined;
   /// The offset to keep when it is refreshing
-  @Prop refreshOffset: number = undefined;
+  @Prop refreshOffset: number | undefined = undefined;
   /// Whether start pull back animation when refresh.
   @Prop pullBackOnRefresh: boolean = false;
   /// The options of pull back animation
@@ -38,10 +38,10 @@ export struct PullToRefresh {
   @Prop pullBackOnError: boolean = false;
   /// The animatorResult
   ///
-  animatorResult: AnimatorResult = undefined;
+  animatorResult: AnimatorResult | undefined = undefined;
 
   aboutToAppear() {
-    this.controller.onRefresh=()=>{
+    this.controller.onRefresh = () => {
       this.refresh();
     };
   }
@@ -62,8 +62,7 @@ export struct PullToRefresh {
       }
       if (this.reachToRefreshOffset == undefined) {
         this.reachToRefreshOffset = this.maxDragOffset * 3 / 4;
-      }
-      else {
+      } else {
         this.reachToRefreshOffset = Math.min(this.reachToRefreshOffset, this.maxDragOffset);
       }
     })
@@ -85,14 +84,15 @@ export struct PullToRefresh {
           if (this.controller.dragOffset == offsetY) {
             return;
           }
-          this.onInnerNoticed(offsetY >= this.reachToRefreshOffset ? PullToRefreshIndicatorMode.armed : PullToRefreshIndicatorMode.drag, offsetY);
+          this.onInnerNoticed(offsetY >= this.reachToRefreshOffset! ? PullToRefreshIndicatorMode.armed :
+          PullToRefreshIndicatorMode.drag, offsetY);
         }
       }).onActionEnd(async (event?: GestureEvent) => {
         if (!event || this.controller.mode == PullToRefreshIndicatorMode.error) {
           return;
         }
         let offsetY = this.controller.dragOffset;
-        let isReadyToRefresh = offsetY > this.reachToRefreshOffset;
+        let isReadyToRefresh = offsetY > this.reachToRefreshOffset!;
         if (!isReadyToRefresh) {
           this.pullBack(offsetY, 0, this.pullBackAnimatorOptions.duration, () => PullToRefreshIndicatorMode.drag);
           return;
@@ -100,7 +100,9 @@ export struct PullToRefresh {
 
         if (this.refreshOffset != undefined && isReadyToRefresh) {
           let refreshOffset = Math.min(this.refreshOffset, this.reachToRefreshOffset);
-          await this.pullBack(offsetY, refreshOffset, this.pullBackAnimatorOptions.duration * (offsetY - refreshOffset) / offsetY, () => PullToRefreshIndicatorMode.snap);
+          await this.pullBack(offsetY, refreshOffset,
+            this.pullBackAnimatorOptions.duration * (offsetY - refreshOffset) / offsetY,
+            () => PullToRefreshIndicatorMode.snap);
         }
         this.refresh();
       }).onActionCancel((event?: GestureEvent) => {
@@ -129,25 +131,23 @@ export struct PullToRefresh {
       this.onRefresh().then((value) => {
         if (value) {
           mode = PullToRefreshIndicatorMode.done;
-        }
-        else {
+        } else {
           mode = PullToRefreshIndicatorMode.error;
         }
         if (this.controller.mode != mode) {
           this.onInnerNoticed(mode, this.controller.dragOffset);
         }
       });
-    }
-    else {
+    } else {
       this.onRefresh().then((value) => {
         if (value) {
-          this.pullBack(this.controller.dragOffset, 0, this.pullBackAnimatorOptions.duration, () => PullToRefreshIndicatorMode.done);
-        }
-        else {
+          this.pullBack(this.controller.dragOffset, 0, this.pullBackAnimatorOptions.duration,
+            () => PullToRefreshIndicatorMode.done);
+        } else {
           if (this.pullBackOnError) {
-            this.pullBack(this.controller.dragOffset, 0, this.pullBackAnimatorOptions.duration, () => PullToRefreshIndicatorMode.error);
-          }
-          else {
+            this.pullBack(this.controller.dragOffset, 0, this.pullBackAnimatorOptions.duration,
+              () => PullToRefreshIndicatorMode.error);
+          } else {
             this.onInnerNoticed(PullToRefreshIndicatorMode.error, this.controller.dragOffset);
           }
 
@@ -156,7 +156,8 @@ export struct PullToRefresh {
     }
   }
 
-  private pullBack(begin: number, end: number, duration: number, getCurrentMode: () => PullToRefreshIndicatorMode): Promise<void> {
+  private pullBack(begin: number, end: number, duration: number,
+    getCurrentMode: () => PullToRefreshIndicatorMode): Promise<void> {
     let animatorOptions: AnimatorOptions = {
       duration: duration,
       easing: this.pullBackAnimatorOptions.easing,
@@ -177,13 +178,15 @@ export struct PullToRefresh {
     this.animatorResult.play();
 
     return new Promise<void>((resolve) => {
-      this.animatorResult.onfinish = () => {
-        if (end == 0) {
-          this.onInnerNoticed(PullToRefreshIndicatorMode.initial, 0);
-        }
-        this.animatorResult = undefined;
-        resolve();
-      };
+      if (this.animatorResult != null) {
+        this.animatorResult!.onfinish = () => {
+          if (end == 0) {
+            this.onInnerNoticed(PullToRefreshIndicatorMode.initial, 0);
+          }
+          this.animatorResult = undefined;
+          resolve();
+        };
+      }
     });
   }
 }

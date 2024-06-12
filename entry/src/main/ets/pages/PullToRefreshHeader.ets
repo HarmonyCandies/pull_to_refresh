@@ -21,7 +21,7 @@ struct PullToRefreshHeader {
       this.firstTime = false;
       return false;
     }
-    var length = this.listData.length;
+    let length = this.listData.length;
 
     this.listData = [length + 3, length + 2, length + 1, ...this.listData];
     this.lastRefreshTime = Date.now();
@@ -56,11 +56,11 @@ struct PullToRefreshHeader {
           controller: this.controller,
         })
         List({ scroller: this.scroller }) {
-          ForEach(this.listData, (item, index) => {
+          ForEach(this.listData, (item:number, index) => {
             ListItem() {
               Text(`${item}`,).align(Alignment.Center)
             }.height(100).width('100%')
-          }, (item, index) => {
+          }, (item:number, index) => {
             return `${item}`;
           })
         }

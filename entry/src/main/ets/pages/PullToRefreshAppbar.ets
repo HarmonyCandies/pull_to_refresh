@@ -17,7 +17,7 @@ struct PullToRefreshAppbar {
   }
 
   onRefresh(): void {
-    var length = this.listData.length;
+    let length = this.listData.length;
     let list: Array<number> = [];
     for (let index = length; index < length + 20; index++) {
       list.push(index);
@@ -71,11 +71,11 @@ struct PullToRefreshAppbar {
               .height(this.controller.dragOffset + 200)
               .objectFit(ImageFit.Cover)
             List({ scroller: this.scroller }) {
-              ForEach(this.listData, (item, index) => {
+              ForEach(this.listData, (item:number, index) => {
                 ListItem() {
                   Text(`${item}`,).align(Alignment.Center)
                 }.height(100).width('100%')
-              }, (item, index) => {
+              }, (item:number, index) => {
                 return `${item}`;
               })
             }

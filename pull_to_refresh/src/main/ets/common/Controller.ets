@@ -9,7 +9,7 @@ namespace pull_to_refresh {
     /// The current pull mode
     mode: PullToRefreshIndicatorMode = PullToRefreshIndicatorMode.initial;
     /// internal
-    onRefresh: () => void;
+    onRefresh?: () => void | undefined = undefined;
 
     refresh() {
       if (this.onRefresh != undefined) {
